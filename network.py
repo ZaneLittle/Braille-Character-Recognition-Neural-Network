@@ -32,7 +32,7 @@ if __name__ == '__main__':
         MaxPooling2D(),
         Flatten(),
         Dense(512, activation='relu'),
-        Dense(1, activation='sigmoid')
+        Dense(26, activation='sigmoid')
     ])
     
     model.compile(optimizer='adam',
