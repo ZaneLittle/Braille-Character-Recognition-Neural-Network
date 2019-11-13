@@ -12,13 +12,31 @@ if __name__ == '__main__':
     epochs = 15                  
     img_height = 240
     img_width = 240
-    train_dir = 'basic_braille_dataset'
+    data_dir = 'basic_braille_dataset'
 
-    # Retrieve data
+
+    # Define data generator
     # dataset = getData(train_dir)
     train_image_generator = ImageDataGenerator(rescale=1./255)
-    train_data_gen = train_image_generator.flow_from_directory(directory=train_dir, shuffle=True, target_size=(img_height, img_width))
+    train_data_gen = train_image_generator.flow_from_directory(
+        directory=data_dir + "/train", 
+        shuffle=True, 
+        target_size=(img_height, img_width)
+    )
 
+    valid_image_generator = ImageDataGenerator(rescale=1./255)
+    valid_data_gen = train_image_generator.flow_from_directory(
+        directory=data_dir + "/valid", 
+        shuffle=True, 
+        target_size=(img_height, img_width)
+    )
+
+    test_image_generator = ImageDataGenerator(rescale=1./255)
+    test_data_gen = train_image_generator.flow_from_directory(
+        directory=data_dir + "/test", 
+        shuffle=True, 
+        target_size=(img_height, img_width)
+    )
 
 
     # Define model and comple
@@ -40,9 +58,13 @@ if __name__ == '__main__':
         metrics=['accuracy'])
 
     # Train model 
-    results = model.fit_generator(
+    train_results = model.fit_generator(
         train_data_gen,
         epochs=epochs,
         validation_data=train_data_gen
     )
+
+    evaluation_results = model.evaluate_generator(generator=valid_data_gen)
+
+
 
