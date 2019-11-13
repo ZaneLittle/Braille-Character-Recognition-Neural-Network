@@ -7,16 +7,19 @@ from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 if __name__ == '__main__':
-    train_dir = 'basic_braille_dataset'
-    dataset = getData(train_dir)
-    
-
     # Define params
     # batch_size = 128
-    epochs = 15
-    # IMG SIZE                    
+    epochs = 15                  
     img_height = 240
     img_width = 240
+    train_dir = 'basic_braille_dataset'
+
+    # Retrieve data
+    # dataset = getData(train_dir)
+    train_image_generator = ImageDataGenerator(rescale=1./255)
+    train_data_gen = train_image_generator.flow_from_directory(directory=train_dir, shuffle=True, target_size=(img_height, img_width))
+
+
 
     # Define model and comple
     model = Sequential([
@@ -31,8 +34,15 @@ if __name__ == '__main__':
         Dense(512, activation='relu'),
         Dense(1, activation='sigmoid')
     ])
-
+    
     model.compile(optimizer='adam',
         loss='binary_crossentropy',
         metrics=['accuracy'])
+
+    # Train model 
+    results = model.fit_generator(
+        train_data_gen,
+        epochs=epochs,
+        validation_data=train_data_gen
+    )
 
