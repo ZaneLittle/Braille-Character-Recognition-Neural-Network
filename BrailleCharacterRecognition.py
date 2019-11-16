@@ -1,15 +1,29 @@
-from PIL import Image
 import tensorflow as tf
 import pandas as pd
+
+import os
+
 from utils import *
+from datetime import datetime
+from packaging import version
+from PIL import Image
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 if __name__ == '__main__':
+    # Check Tensorflow version of current machine
+    print("Using TensorFlow version: ", tf.__version__)
+    assert version.parse(tf.__version__).release[0] >= 2, \
+        "TensorFlow 2.0 or above is required."
+    
+    # Set logging directory
+    logdir = ".\\logs\\" + datetime.now().strftime("%Y%m%d-%H%M%S")
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
+
     # Define params
     # batch_size = 128
-    epochs = 15                  
+    epochs = 5                  
     img_height = 240
     img_width = 240
     data_dir = 'basic_braille_dataset'
@@ -61,10 +75,18 @@ if __name__ == '__main__':
     train_results = model.fit_generator(
         train_data_gen,
         epochs=epochs,
-        validation_data=train_data_gen
+        validation_data=valid_data_gen,
+        # verbose=0, # Suppress chatty output
+        callbacks=[tensorboard_callback]
     )
 
-    evaluation_results = model.evaluate_generator(generator=valid_data_gen)
+    print('\nTraining results: {}\n\n'.format(train_results.history))
 
+    # Test Model
+    test_data_gen.reset()
+    pred = model.predict_generator(test_data_gen, verbose=1)
+    print('Predicted output is: {}'.format(np.argmax(pred, axis=1)))
+    
+    print('\n\nStarting TensorBoard... Navigate to http://localhost:6006/ for metrics breakdown.\n\n')
 
-
+    os.system('tensorboard --logdir logs/')
