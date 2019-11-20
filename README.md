@@ -8,5 +8,5 @@ TensorFlow
 Keras  
 TensorBoard  
 Pandas  
-Pillow  
-Numpy (Most likely included elsewhere)  
+Pillow (PIL/PythonImageLibrary)  
+Numpy
