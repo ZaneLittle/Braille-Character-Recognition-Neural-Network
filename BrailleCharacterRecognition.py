@@ -24,14 +24,16 @@ if __name__ == '__main__':
     # Define params
     train_batch_size = 32
     validate_batch_size = 16
-    epochs = 100                  
+    epochs = 10                  
     img_height = 240
     img_width = 240
     data_dir = 'mixed_dataset'
 
+    print('\ndataset: {}\n'.format(data_dir))
+
     # Define data generator
     # dataset = getData(train_dir)
-    train_image_generator = ImageDataGenerator(rescale=1./255)
+    train_image_generator = ImageDataGenerator() #rescale=1./255)
     train_data_gen = train_image_generator.flow_from_directory(
         directory=data_dir + "/train", 
         shuffle=True, 
@@ -39,7 +41,7 @@ if __name__ == '__main__':
         batch_size=train_batch_size
     )
 
-    valid_image_generator = ImageDataGenerator(rescale=1./255)
+    valid_image_generator = ImageDataGenerator() #rescale=1./255)
     valid_data_gen = train_image_generator.flow_from_directory(
         # directory=data_dir + "/valid",
         directory=data_dir + "/train",  # TODO: get validation data
@@ -48,7 +50,7 @@ if __name__ == '__main__':
         batch_size=validate_batch_size
     )
 
-    test_image_generator = ImageDataGenerator(rescale=1./255)
+    test_image_generator = ImageDataGenerator() #rescale=1./255)
     test_data_gen = train_image_generator.flow_from_directory(
         # directory=data_dir + "/test",
         directory=data_dir + "/train", # TODO: get testing data

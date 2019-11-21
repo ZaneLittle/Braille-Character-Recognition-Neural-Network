@@ -1,3 +1,5 @@
+Dataset: mixed_dataset
+
 2019-11-21 14:53:48.051407: I tensorflow/core/profiler/lib/profiler_session.cc:184] Profiler session started.
 7/7 [==============================] - 20s 3s/step - loss: 0.2964 - accuracy: 0.8880 - val_loss: 0.1986 - val_accuracy: 0.9615
 Epoch 2/100
