@@ -22,12 +22,12 @@ if __name__ == '__main__':
     tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
 
     # Define params
-    # batch_size = 128
-    epochs = 5                  
+    train_batch_size = 32
+    validate_batch_size = 16
+    epochs = 100                  
     img_height = 240
     img_width = 240
-    data_dir = 'basic_braille_dataset'
-
+    data_dir = 'mixed_dataset'
 
     # Define data generator
     # dataset = getData(train_dir)
@@ -35,21 +35,26 @@ if __name__ == '__main__':
     train_data_gen = train_image_generator.flow_from_directory(
         directory=data_dir + "/train", 
         shuffle=True, 
-        target_size=(img_height, img_width)
+        target_size=(img_height, img_width),
+        batch_size=train_batch_size
     )
 
     valid_image_generator = ImageDataGenerator(rescale=1./255)
     valid_data_gen = train_image_generator.flow_from_directory(
-        directory=data_dir + "/valid", 
+        # directory=data_dir + "/valid",
+        directory=data_dir + "/train",  # TODO: get validation data
         shuffle=True, 
-        target_size=(img_height, img_width)
+        target_size=(img_height, img_width),
+        batch_size=validate_batch_size
     )
 
     test_image_generator = ImageDataGenerator(rescale=1./255)
     test_data_gen = train_image_generator.flow_from_directory(
-        directory=data_dir + "/test", 
+        # directory=data_dir + "/test",
+        directory=data_dir + "/train", # TODO: get testing data
         shuffle=True, 
-        target_size=(img_height, img_width)
+        target_size=(img_height, img_width),
+        batch_size=1
     )
 
 
@@ -73,9 +78,11 @@ if __name__ == '__main__':
 
     # Train model 
     train_results = model.fit_generator(
-        train_data_gen,
+        generator=train_data_gen,
+        steps_per_epoch=train_data_gen.n//train_data_gen.batch_size,
         epochs=epochs,
         validation_data=valid_data_gen,
+        validation_steps=valid_data_gen.n//valid_data_gen.batch_size,
         # verbose=0, # Suppress chatty output
         callbacks=[tensorboard_callback]
     )
@@ -84,8 +91,8 @@ if __name__ == '__main__':
 
     # Test Model
     test_data_gen.reset()
-    pred = model.predict_generator(test_data_gen, verbose=1)
-    print('Predicted output is: {}'.format(np.argmax(pred, axis=1)))
+    loss, acc = model.evaluate_generator(test_data_gen, verbose=1)
+    print('Evaluation results: \n\tLoss: {} \tAccuracty: {}'.format(loss, acc))
     
     print('\n\nStarting TensorBoard... Navigate to http://localhost:6006/ for metrics breakdown.\n\n')
 
