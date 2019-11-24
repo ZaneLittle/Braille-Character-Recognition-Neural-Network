@@ -23,10 +23,10 @@ if __name__ == '__main__':
 
     # Define params
     # batch_size = 128
-    epochs = 5                  
+    epochs = 20                  
     img_height = 240
     img_width = 240
-    data_dir = 'basic_braille_dataset'
+    data_dir = 'braille_uncropped'
 
 
     # Define data generator
@@ -40,14 +40,14 @@ if __name__ == '__main__':
 
     valid_image_generator = ImageDataGenerator(rescale=1./255)
     valid_data_gen = train_image_generator.flow_from_directory(
-        directory=data_dir + "/valid", 
+        directory="braille_cropped/train", 
         shuffle=True, 
         target_size=(img_height, img_width)
     )
 
     test_image_generator = ImageDataGenerator(rescale=1./255)
     test_data_gen = train_image_generator.flow_from_directory(
-        directory=data_dir + "/test", 
+        directory="braille_cropped/train",
         shuffle=True, 
         target_size=(img_height, img_width)
     )
