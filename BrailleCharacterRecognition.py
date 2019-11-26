@@ -27,11 +27,10 @@ if __name__ == '__main__':
     epochs = 20                  
     img_height = 240
     img_width = 240
-    # data_dir = 'braille_uncropped'
-    data_dir = os.path.join('braille_cropped', 'braille_uncropped') # mixed data
+    data_dir = 'braille_mixed'
 
     # Define data generator
-    train_image_generator = ImageDataGenerator() # rescale=1./255)
+    train_image_generator = ImageDataGenerator(rescale=1./255)
     train_data_gen = train_image_generator.flow_from_directory(
         directory=data_dir + "/train", 
         shuffle=True, 
@@ -39,7 +38,7 @@ if __name__ == '__main__':
         batch_size=train_batch_size
     )
 
-    valid_image_generator = ImageDataGenerator() # rescale=1./255)
+    valid_image_generator = ImageDataGenerator(rescale=1./255)
     valid_data_gen = train_image_generator.flow_from_directory(
         directory=data_dir + "/valid",
         shuffle=True, 
@@ -47,7 +46,7 @@ if __name__ == '__main__':
         batch_size=validate_batch_size
     )
 
-    test_image_generator = ImageDataGenerator() # rescale=1./255)
+    test_image_generator = ImageDataGenerator(rescale=1./255)
     test_data_gen = train_image_generator.flow_from_directory(
         directory=data_dir + "/test",
         shuffle=True, 

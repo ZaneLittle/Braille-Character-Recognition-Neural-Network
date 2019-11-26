@@ -3,6 +3,45 @@ import numpy as np
 import pandas as pd
 from string import ascii_uppercase
 from PIL import Image
+import shutil
+import os
+import random
+from pathlib import Path
+
+def join_path(paths):
+    joined_path = '' + paths[0]
+    for path in paths[1:]:
+        joined_path += '/' + path
+    return joined_path
+
+
+def split_data(source, dest, ratio=0.2):
+    classes = os.listdir(source)
+    for letter in classes:
+        files = os.listdir(source + '/' + letter)
+        random.shuffle(files)
+        move = files[0:int(len(files)*ratio)]
+        for f in move:
+            thisClass = '{}/{}'.format(dest,letter)
+            if not os.path.isdir(thisClass):
+                os.mkdirs(thisClass)
+            shutil.move('{}/{}/{}'.format(source, letter, f), thisClass)
+
+
+
+def copy_data(sources, dest):
+    for source in sources: # for all data sources
+        for step in os.listdir(source): # for train, test, and valid
+            for letter in os.listdir(join_path([source, step])):
+                files = os.listdir(join_path([source, step, letter]))
+                random.shuffle(files)
+                for f in files:
+                    thisClass = join_path([dest, step, letter])
+                    if not os.path.isdir(thisClass):
+                        path = Path(thisClass)
+                        path.mkdir(parents=True)
+                    shutil.copyfile(join_path([source, step, letter, f]), thisClass)
+
 
 def create_one_hot_from_name(image_name):
     """ Create a one-hot encoded vector from image name as labels are not declared"""
