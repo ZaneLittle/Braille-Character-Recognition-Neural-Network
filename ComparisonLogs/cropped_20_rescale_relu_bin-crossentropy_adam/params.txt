@@ -1,0 +1,6 @@
+dataset: cropped
+epochs: 20
+rescale: true
+activation: relu
+loss: binary crossentropy
+optimizer: adam
