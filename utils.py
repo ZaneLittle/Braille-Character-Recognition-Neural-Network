@@ -30,6 +30,7 @@ def split_data(source, dest, ratio=0.2):
 
 
 def copy_data(sources, dest):
+    print('Copying data...')
     for source in sources: # for all data sources
         for step in os.listdir(source): # for train, test, and valid
             for letter in os.listdir(join_path([source, step])):
@@ -40,7 +41,12 @@ def copy_data(sources, dest):
                     if not os.path.isdir(thisClass):
                         path = Path(thisClass)
                         path.mkdir(parents=True)
-                    shutil.copyfile(join_path([source, step, letter, f]), thisClass)
+                    shutil.copy(join_path([source, step, letter, f]), thisClass)
+
+def convert_to_letters(indecies):
+    ''' Converts class indecies to letter representation '''
+    numeric_map = get_numeric_mapping_dict() 
+    return [numeric_map[i] for i in indecies]
 
 
 def create_one_hot_from_name(image_name):
