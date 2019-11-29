@@ -94,6 +94,59 @@ def cleanup_data():
     if consts.MIXED:
         shutil.rmtree(consts.DATA_DIR)
 
+
+def predict_single_image(model, file):
+    ''' Takes relative path of a single file and model and outputs prediction '''
+    img = image.load_img(file, target_size=consts.IMAGE_SHAPE)
+    img = image.img_to_array(img)
+    img = np.expand_dims(img, axis=0)
+
+    pred = model.predict(img)
+    pred_class = vec_to_letter(pred)
+
+    print('Predicted class: {}'.format(pred_class))
+
+
+
+def predict_dir(model, directory):
+    ''' 
+    Predicts all images in a directory with given model
+    Directory must be regular tree in the same format as was used for testing
+    Outputs prediction vs true, accuracy and confusion matrix
+    '''
+    pred_image_generator = image.ImageDataGenerator(rescale=1./255)
+    pred_data_gen = pred_image_generator.flow_from_directory(
+        directory=directory,
+        shuffle=False, 
+        target_size=consts.IMAGE_SHAPE,
+        batch_size=1,
+        class_mode=None
+    )
+
+    print('Thinking...\n')
+    pred = model.predict_generator(generator=pred_data_gen, steps=pred_data_gen.n // pred_data_gen.batch_size)
+
+    pred_class_indicies = np.argmax(pred, axis=1)
+    true_class_indecies = pred_data_gen.labels
+    
+    pred_labels = convert_to_letters(pred_class_indicies) 
+    true_labels = convert_to_letters(true_class_indecies)
+
+    print('Pred labels: {}'.format(pred_labels))
+    print('True labels: {}'.format(true_labels))
+
+    acc = 0
+    for true, pred in zip(true_labels, pred_labels):
+        if true == pred:
+            acc += 1
+    acc = (acc / len(true_labels) * 100)
+    print('Accuracy: {}\n'.format(acc))
+
+    plot_confusion_matrix(y_true=true_labels, y_pred=pred_labels)
+    plt.show()
+    
+
+
 def predict_loop(model):
     ''' 
     Loop and get user input filename and predict with given model
@@ -102,45 +155,20 @@ def predict_loop(model):
     print("Entering prediction phase. Input nothing to exit.")
     mapping_dict = get_numeric_mapping_dict()
     while True:
-        user_input = input('\nEnter the folder name (relative path) of an images to predict:')
+        print('Enter the directory tree or file name (relative path) of an image or images to predict.')
+        user_input = input('What would you like to predict? (enter nothing to exit):')
         if not user_input:
             break
         else:
             # Define image and pre-process:
             try:
-                pred_image_generator = image.ImageDataGenerator(rescale=1./255)
-                pred_data_gen = pred_image_generator.flow_from_directory(
-                    directory=user_input,
-                    shuffle=False, 
-                    target_size=consts.IMAGE_SHAPE,
-                    batch_size=1,
-                    class_mode=None
-                )
-                
-                pred = model.predict_generator(generator=pred_data_gen, steps=pred_data_gen.n // pred_data_gen.batch_size)
-                print('Prediction: {}'.format(pred))
+                if os.path.isdir(user_input):
+                    predict_dir(model=model, directory=user_input)
+                elif os.path.isfile(user_input):
+                    predict_single_image(model=model, file=user_input)
+                else:
+                    print('Error reading file: {}'.format(user_input))
 
-                pred_class_indicies = np.argmax(pred, axis=1)
-                true_class_indecies = pred_data_gen.labels
-                
-                pred_labels = convert_to_letters(pred_class_indicies) 
-                true_labels = convert_to_letters(true_class_indecies)
-
-                print('Pred class indicies: {}'.format(pred_class_indicies))
-                print('True class indicies: {}'.format(true_class_indecies))
-
-                print('Pred labels: {}'.format(pred_labels))
-                print('True labels: {}'.format(true_labels))
-
-                acc = 0
-                for true, pred in zip(true_labels, pred_labels):
-                    if true == pred:
-                        acc += 1
-                acc = (acc / len(true_labels) * 100)
-                print('Accuracy: {}'.format(acc))
-
-                plot_confusion_matrix(y_true=true_labels, y_pred=pred_labels)
-                plt.show()
             except ValueError as e:
                 print('Invalid file. Please try again')
                 print('Value error: {}'.format(e))

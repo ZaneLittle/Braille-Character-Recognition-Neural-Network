@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from string import ascii_uppercase
 from PIL import Image
 from pathlib import Path
+from sklearn.metrics import confusion_matrix
 
 
 def join_path(paths):
@@ -86,8 +87,8 @@ def letter_to_one_hot(letter):
     return vec
 
 
-def one_hot_to_letter(vec):
-    ''' Takes a one hot vector and converts it to the corresponding uppercase letter'''
+def vec_to_letter(vec):
+    ''' Takes a vector and converts it to the corresponding uppercase letter'''
     return get_numeric_mapping_dict()[np.argmax(vec)]           
 
 
@@ -120,7 +121,9 @@ def plot_confusion_matrix(y_true,
     y_pred is the list of actual values
     """
 
-    classes=set(y_true)
+    # Make entries a distinct sorted list
+    classes = list(set(y_true))
+    classes.sort()
 
     cm = confusion_matrix(y_true, y_pred, labels=classes)
   
