@@ -1,5 +1,6 @@
 import tensorflow as tf
 import pandas as pd
+import matplotlib.pyplot as plt
 
 import os
 
@@ -137,7 +138,9 @@ def predict_loop(model):
                         acc += 1
                 acc = (acc / len(true_labels) * 100)
                 print('Accuracy: {}'.format(acc))
-    
+
+                plot_confusion_matrix(y_true=true_labels, y_pred=pred_labels)
+                plt.show()
             except ValueError as e:
                 print('Invalid file. Please try again')
                 print('Value error: {}'.format(e))

@@ -1,6 +1,6 @@
 class Consts():
     def __init__(self):
-        self.DATA_DIR = 'braille_cropped'
+        self.DATA_DIR = 'braille_uncropped'
         self.MIXED = False
         self.EPOCHS = 20
         self.TRAIN_BATCH_SIZE = 104

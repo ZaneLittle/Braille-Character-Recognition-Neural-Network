@@ -1,12 +1,16 @@
 import glob
-import numpy as np
-import pandas as pd
-from string import ascii_uppercase
-from PIL import Image
 import shutil
 import os
 import random
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from string import ascii_uppercase
+from PIL import Image
 from pathlib import Path
+
 
 def join_path(paths):
     joined_path = '' + paths[0]
@@ -103,3 +107,49 @@ def getData(dir):
 
             data_arr.append([img, letter])
     return pd.DataFrame(data=data_arr, columns=['img', 'class'])
+
+
+def plot_confusion_matrix(y_true, 
+                        y_pred, 
+                        normalize=False,
+                        title='Results Confusion matrix',
+                        cmap=plt.cm.Blues):
+    """
+    Plots a 3d confusion matrix
+    y_true is the list true values
+    y_pred is the list of actual values
+    """
+
+    classes=set(y_true)
+
+    cm = confusion_matrix(y_true, y_pred, labels=classes)
+  
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+
+    fig, ax = plt.subplots()
+    im = ax.imshow(cm, interpolation='nearest', cmap=cmap)
+    ax.figure.colorbar(im, ax=ax)
+    # We want to show all ticks...
+    ax.set(xticks=np.arange(cm.shape[1]),
+            yticks=np.arange(cm.shape[0]),
+            # ... and label them with the respective list entries
+            xticklabels=classes, yticklabels=classes,
+            title=title,
+            ylabel='True label',
+            xlabel='Predicted label')
+
+    # Rotate the tick labels and set their alignment.
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+            rotation_mode="anchor")
+
+    # Loop over data dimensions and create text annotations.
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            ax.text(j, i, format(cm[i, j], fmt),
+                    ha="center", va="center",
+                    color="white" if cm[i, j] > thresh else "black")
+    fig.tight_layout()
+    return ax
