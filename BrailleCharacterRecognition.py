@@ -12,7 +12,7 @@ from packaging import version
 from PIL import Image
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
-from tensorflow.keras.preprocessing import image # ImageDataGenerator, load_img
+from tensorflow.keras.preprocessing import image
 
 consts = Consts()
 
@@ -155,7 +155,7 @@ def predict_loop(model):
     print("Entering prediction phase. Input nothing to exit.")
     mapping_dict = get_numeric_mapping_dict()
     while True:
-        print('Enter the directory tree or file name (relative path) of an image or images to predict.')
+        print('\nEnter the directory tree or file name (relative path) of an image or images to predict.')
         user_input = input('What would you like to predict? (enter nothing to exit):')
         if not user_input:
             break
