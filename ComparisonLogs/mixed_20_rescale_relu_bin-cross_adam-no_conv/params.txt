@@ -1,0 +1,8 @@
+dataset: mixed
+epochs: 20
+rescale: true
+activation: relu
+loss: binary crossentropy
+optimizer: adam
+
+net: using 1 dense hidden layer with no convolutional layers

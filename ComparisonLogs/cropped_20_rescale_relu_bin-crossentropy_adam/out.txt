@@ -1,3 +1,4 @@
+Epoch 1/20
 11/11 [==============================] - 55s 5s/step - loss: 0.2444 - accuracy: 0.9238 - val_loss: 0.1632 - val_accuracy: 0.9615
 Epoch 2/20
 11/11 [==============================] - 53s 5s/step - loss: 0.1652 - accuracy: 0.9627 - val_loss: 0.1594 - val_accuracy: 0.9627
