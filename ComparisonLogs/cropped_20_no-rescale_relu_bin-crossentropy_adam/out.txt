@@ -1,5 +1,4 @@
 Epoch 1/20
-2019-11-25 21:03:50.155422: I tensorflow/core/profiler/lib/profiler_session.cc:184] Profiler session started.
 10/10 [==============================] - 249s 25s/step - loss: 1.2266 - accuracy: 0.8818 - val_loss: 0.5933 - val_accuracy: 0.9615
 Epoch 2/20
 10/10 [==============================] - 232s 23s/step - loss: 1.1965 - accuracy: 0.9181 - val_loss: 1.6666 - val_accuracy: 0.8915

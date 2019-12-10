@@ -1,0 +1,6 @@
+dataset: mixed
+epochs: 20
+rescale: true
+activation: sigmoid
+loss: binary crossentropy
+optimizer: adam
